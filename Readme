@@ -1,67 +1,44 @@
 === Unused Plugins and Themes Checker ===
-Contributors: Aaditya Uzumaki
-Tags: multisite, plugins, themes, unused, network admin
+Contributors: aaditya_uzumaki
+Tags: multisite, plugins, themes, unused, network, admin, analytics, delete
 Requires at least: 5.0
-Tested up to: 6.2
-Requires PHP: 7.2
-Stable tag: 1.1
+Tested up to: 6.5
+Requires PHP: 7.4
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A plugin to identify unused plugins and themes in a WordPress multisite network.
+A plugin to identify and delete unused plugins and themes in a WordPress multisite network, providing analytics and details about active plugins and themes.
 
 == Description ==
 
-The Unused Plugins and Themes Checker plugin helps network administrators identify unused plugins and themes across a WordPress multisite network. It provides a detailed overview of active and inactive plugins and themes, making it easier to manage and optimize the network environment.
+The Unused Plugins and Themes Checker plugin is designed to help network administrators of WordPress multisite networks identify unused plugins and themes. This plugin provides a comprehensive overview of which plugins and themes are active on which sites, how many sites use each plugin/theme, and highlights unused ones. Additionally, it allows the deletion of unused plugins in batches of 20 upon manual confirmation.
 
-== Features ==
+= Features =
 
-* Display a list of active plugins and the sites they are used on.
-* Display a list of unused plugins.
-* Display a list of active themes and the sites they are used on.
-* Display a list of unused themes.
-* Helps network administrators keep the network clean and optimized.
+* Displays a list of all active plugins and the sites they are active on.
+* Shows a list of unused plugins across the multisite network with an option to delete them in batches.
+* Lists all active themes and the sites they are active on.
+* Highlights unused themes across the network.
+* Provides analytics with counts of active instances for plugins and themes.
+* Includes details about parent and child themes.
+* Styled with Bootstrap for a clean and responsive interface.
 
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/unused-plugins-themes-checker` directory, or install the plugin through the WordPress plugins screen directly.
 2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to the network admin dashboard to find the "Unused Plugins/Themes" menu item under the "Network Admin" menu.
-
-== Frequently Asked Questions ==
-
-= How does this plugin work? =
-
-The plugin scans all sites in the multisite network, collects data on active plugins and themes, and compares them to the list of all available plugins and themes. It then displays tables listing active and inactive plugins and themes.
-
-= Can I use this plugin on a single-site WordPress installation? =
-
-No, this plugin is designed specifically for WordPress multisite networks.
-
-== Screenshots ==
-
-1. Dashboard view of active and unused plugins.
-2. Dashboard view of active and unused themes.
+3. Navigate to the network admin dashboard.
+4. Under the 'Settings' menu, find 'Unused Plugins/Themes' to view the analytics and details.
 
 == Changelog ==
 
-= 1.1 =
-* Added detailed tables for active plugins and themes.
-* Improved the display of unused plugins and themes.
-* Added listing of sites where each active plugin and theme is used.
-
-= 1.0 =
-* Initial release of the plugin.
-
-== Upgrade Notice ==
+= 1.2 =
+* Added the ability to delete unused plugins in batches of 20.
+* Improved user interface with checkboxes and manual confirmation for deletions.
 
 = 1.1 =
-Upgrade to this version for enhanced details on active plugins and themes and improved UI for managing unused plugins and themes.
-
-== Credits ==
-
-Developed by Aaditya Uzumaki. For more information, visit [goenka.xyz](https://goenka.xyz).
-
-== License ==
-
-This plugin is licensed under the GPLv2 or later. For more information, see [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html).
+* Added Bootstrap for better table styling.
+* Displayed counts of active instances for plugins and themes.
+* Included details about parent and child themes.
+* Improved overall analytics presentation
