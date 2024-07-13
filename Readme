@@ -1,0 +1,67 @@
+=== Unused Plugins and Themes Checker ===
+Contributors: Aaditya Uzumaki
+Tags: multisite, plugins, themes, unused, network admin
+Requires at least: 5.0
+Tested up to: 6.2
+Requires PHP: 7.2
+Stable tag: 1.1
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+A plugin to identify unused plugins and themes in a WordPress multisite network.
+
+== Description ==
+
+The Unused Plugins and Themes Checker plugin helps network administrators identify unused plugins and themes across a WordPress multisite network. It provides a detailed overview of active and inactive plugins and themes, making it easier to manage and optimize the network environment.
+
+== Features ==
+
+* Display a list of active plugins and the sites they are used on.
+* Display a list of unused plugins.
+* Display a list of active themes and the sites they are used on.
+* Display a list of unused themes.
+* Helps network administrators keep the network clean and optimized.
+
+== Installation ==
+
+1. Upload the plugin files to the `/wp-content/plugins/unused-plugins-themes-checker` directory, or install the plugin through the WordPress plugins screen directly.
+2. Activate the plugin through the 'Plugins' screen in WordPress.
+3. Navigate to the network admin dashboard to find the "Unused Plugins/Themes" menu item under the "Network Admin" menu.
+
+== Frequently Asked Questions ==
+
+= How does this plugin work? =
+
+The plugin scans all sites in the multisite network, collects data on active plugins and themes, and compares them to the list of all available plugins and themes. It then displays tables listing active and inactive plugins and themes.
+
+= Can I use this plugin on a single-site WordPress installation? =
+
+No, this plugin is designed specifically for WordPress multisite networks.
+
+== Screenshots ==
+
+1. Dashboard view of active and unused plugins.
+2. Dashboard view of active and unused themes.
+
+== Changelog ==
+
+= 1.1 =
+* Added detailed tables for active plugins and themes.
+* Improved the display of unused plugins and themes.
+* Added listing of sites where each active plugin and theme is used.
+
+= 1.0 =
+* Initial release of the plugin.
+
+== Upgrade Notice ==
+
+= 1.1 =
+Upgrade to this version for enhanced details on active plugins and themes and improved UI for managing unused plugins and themes.
+
+== Credits ==
+
+Developed by Aaditya Uzumaki. For more information, visit [goenka.xyz](https://goenka.xyz).
+
+== License ==
+
+This plugin is licensed under the GPLv2 or later. For more information, see [https://www.gnu.org/licenses/gpl-2.0.html](https://www.gnu.org/licenses/gpl-2.0.html).
