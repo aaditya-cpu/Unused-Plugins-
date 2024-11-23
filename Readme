@@ -1,144 +1,169 @@
-Unused Plugins and Themes Checker
+# Unused Plugins and Themes Checker
 
-Version: 2.1
-Author: Aaditya Uzumaki
-Website: goenka.xyz
-Description
+**Version**: 2.1  
+**Author**: Aaditya Uzumaki  
+**Website**: [goenka.xyz](https://goenka.xyz)  
 
-The Unused Plugins and Themes Checker plugin helps you manage your WordPress installation by identifying and deleting unused plugins and themes. It works seamlessly with both single-site and multisite installations, offering advanced metrics and classifications for better decision-making.
-Features
+---
 
-    Advanced Metrics Bar: Displays installation type, disk usage, database table count, and database size.
-    Plugin Classification: Differentiates between Network Active and Site Active plugins in multisite installations.
-    Unused Plugin and Theme Detection: Scans for unused plugins and themes, presenting them for easy management.
-    CDN Caching: Caches CSS and JavaScript files locally after the first load, with priority to CDN files initially.
-    User-Friendly Interface: Clean, responsive design styled with the "Blood-of-Sun" theme.
-    Deletion Features: Allows safe and easy deletion of unused plugins and themes.
+## Description
 
-License
+The **Unused Plugins and Themes Checker** plugin helps you manage your WordPress installation by identifying and deleting unused plugins and themes. It works seamlessly with both single-site and multisite installations, offering advanced metrics and classifications for better decision-making.
 
-This plugin is licensed under the Attribution Assurance License (AAL). You may modify, distribute, or use the plugin in your projects under the following conditions:
+---
 
-    Attribution: You must give appropriate credit to the original author, Aaditya Uzumaki, by including the original plugin name and author details in any derivative works or distributions.
-    License Inclusion: The same license must apply to derivative works, ensuring that others can benefit under the same terms.
+## Features
 
-SPDX-License-Identifier: AAL-1.0
+- **Advanced Metrics Bar**: Displays installation type, disk usage, database table count, and database size.
+- **Plugin Classification**: Differentiates between **Network Active** and **Site Active** plugins in multisite installations.
+- **Unused Plugin and Theme Detection**: Scans for unused plugins and themes, presenting them for easy management.
+- **CDN Caching**: Caches CSS and JavaScript files locally after the first load, with priority to CDN files initially.
+- **User-Friendly Interface**: Clean, responsive design styled with the "Blood-of-Sun" theme.
+- **Deletion Features**: Allows safe and easy deletion of unused plugins and themes.
 
-For details, visit the AAL License.
-Explanation of Classes and Program Flow
-Classes and Their Responsibilities
-UnusedPluginsThemesChecker
+---
 
+## License
+
+This plugin is licensed under the **Attribution Assurance License (AAL)**. You may modify, distribute, or use the plugin in your projects under the following conditions:
+
+- **Attribution**: You must give appropriate credit to the original author, Aaditya Uzumaki, by including the original plugin name and author details in any derivative works or distributions.
+- **License Inclusion**: The same license must apply to derivative works, ensuring that others can benefit under the same terms.
+
+**SPDX-License-Identifier**: AAL-1.0  
+
+For details, visit the [AAL License](https://opensource.org/licenses/AAL).
+
+---
+
+## Explanation of Classes and Program Flow
+
+### **Classes and Their Responsibilities**
+
+#### `UnusedPluginsThemesChecker`
 The main class of the plugin encapsulates all features and handles the following responsibilities:
 
-    __construct():
-        Detects if the installation is multisite or single-site.
-        Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
-        Initiates CDN caching during the first admin initialization.
+- **`__construct()`**:
+  - Detects if the installation is multisite or single-site.
+  - Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
+  - Initiates CDN caching during the first admin initialization.
 
-    enqueue_assets():
-        Loads styles and scripts, prioritizing CDN files unless locally cached.
-        Adds inline styles and JavaScript for a polished UI.
+- **`enqueue_assets()`**:
+  - Loads styles and scripts, prioritizing CDN files unless locally cached.
+  - Adds inline styles and JavaScript for a polished UI.
 
-    add_menu_page():
-        Adds a menu page to the admin or network admin dashboard, depending on the installation type.
+- **`add_menu_page()`**:
+  - Adds a menu page to the admin or network admin dashboard, depending on the installation type.
 
-    process_deletions():
-        Deletes selected unused plugins and themes based on user input.
+- **`process_deletions()`**:
+  - Deletes selected unused plugins and themes based on user input.
 
-    get_metrics():
-        Fetches key installation metrics, including:
-            Installation type (single-site or multisite).
-            Disk usage.
-            Number of database tables.
-            Total database size.
+- **`get_metrics()`**:
+  - Fetches key installation metrics, including:
+    - Installation type (single-site or multisite).
+    - Disk usage.
+    - Number of database tables.
+    - Total database size.
 
-    get_active_items():
-        Retrieves active plugins and themes, grouped by site for multisite installations.
+- **`get_active_items()`**:
+  - Retrieves active plugins and themes, grouped by site for multisite installations.
 
-    render_admin_page():
-        Generates the admin page, including:
-            A metrics bar with key statistics.
-            A table of active plugins/themes.
-            A section for unused plugins/themes with deletion options.
+- **`render_admin_page()`**:
+  - Generates the admin page, including:
+    - A metrics bar with key statistics.
+    - A table of active plugins/themes.
+    - A section for unused plugins/themes with deletion options.
 
-    render_table():
-        Displays active plugins/themes with associated sites, database tables, and classifications (e.g., "Network Active" or "Site Active").
+- **`render_table()`**:
+  - Displays active plugins/themes with associated sites, database tables, and classifications (e.g., "Network Active" or "Site Active").
 
-    render_unused_section():
-        Displays unused plugins/themes for review and deletion.
+- **`render_unused_section()`**:
+  - Displays unused plugins/themes for review and deletion.
 
-    cache_cdn_files():
-        Downloads and caches CSS/JS files locally from CDN sources during the first run.
-        Uses cached files for subsequent plugin loads.
+- **`cache_cdn_files()`**:
+  - Downloads and caches CSS/JS files locally from CDN sources during the first run.
+  - Uses cached files for subsequent plugin loads.
 
-Program Flow
+---
 
-    Initialization:
-        The UnusedPluginsThemesChecker class is instantiated during plugin activation.
-        It determines the installation type and registers hooks.
+### **Program Flow**
 
-    Asset Loading:
-        Enqueues styles and scripts, prioritizing CDN files unless cached locally.
+1. **Initialization**:
+   - The `UnusedPluginsThemesChecker` class is instantiated during plugin activation.
+   - It determines the installation type and registers hooks.
 
-    Admin Menu:
-        Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
+2. **Asset Loading**:
+   - Enqueues styles and scripts, prioritizing CDN files unless cached locally.
 
-    Interface Rendering:
-        Displays:
-            Metrics bar for installation statistics.
-            Tables of active and unused plugins/themes.
-            Buttons for managing and deleting unused items.
+3. **Admin Menu**:
+   - Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
 
-    Deletion Workflow:
-        Allows users to select and delete unused plugins/themes safely.
+4. **Interface Rendering**:
+   - Displays:
+     - Metrics bar for installation statistics.
+     - Tables of active and unused plugins/themes.
+     - Buttons for managing and deleting unused items.
 
-    CDN Caching:
-        Downloads CSS/JS files from CDN sources on the first admin initialization.
-        Serves cached files for subsequent loads to improve performance.
+5. **Deletion Workflow**:
+   - Allows users to select and delete unused plugins/themes safely.
 
-Installation
-From WordPress Admin:
+6. **CDN Caching**:
+   - Downloads CSS/JS files from CDN sources on the first admin initialization.
+   - Serves cached files for subsequent loads to improve performance.
 
-    Navigate to Plugins > Add New.
-    Click Upload Plugin.
-    Upload the plugin ZIP file and click Install Now.
-    Once installed, click Activate.
+---
 
-Manual Installation:
+## Installation
 
-    Upload the plugin folder to /wp-content/plugins/.
-    Activate the plugin via the Plugins menu in WordPress.
+### From WordPress Admin:
 
-Usage
-For Single-Site Installations:
+1. Navigate to `Plugins > Add New`.
+2. Click **Upload Plugin**.
+3. Upload the plugin ZIP file and click **Install Now**.
+4. Once installed, click **Activate**.
 
-    Navigate to the Admin Dashboard.
-    Click Unused Items in the menu.
-    Review active and unused plugins/themes.
-    Delete unused plugins/themes as needed.
+### Manual Installation:
 
-For Multisite Installations:
+1. Upload the plugin folder to `/wp-content/plugins/`.
+2. Activate the plugin via the **Plugins** menu in WordPress.
 
-    Navigate to the Network Admin Dashboard.
-    Click Unused Plugins/Themes in the menu.
-    Review active and unused plugins/themes network-wide.
-    Delete unused items as needed.
+---
 
-Changelog
-2.1 (Latest Release)
+## Usage
 
-    Added CDN caching with local fallback.
-    Enhanced UI with the Blood-of-Sun theme.
-    Introduced a metrics bar for displaying installation stats.
-    Improved classification for multisite plugins.
+### For Single-Site Installations:
 
-2.0
+1. Navigate to the **Admin Dashboard**.
+2. Click **Unused Items** in the menu.
+3. Review active and unused plugins/themes.
+4. Delete unused plugins/themes as needed.
 
-    Added multisite support.
-    Introduced deletion features for unused plugins and themes.
-    Categorized active plugins/themes.
+### For Multisite Installations:
 
-Support
+1. Navigate to the **Network Admin Dashboard**.
+2. Click **Unused Plugins/Themes** in the menu.
+3. Review active and unused plugins/themes network-wide.
+4. Delete unused items as needed.
 
-For questions or feedback, contact Aaditya Uzumaki. Suggestions are always welcome!
+---
+
+## Changelog
+
+### **2.1** (Latest Release)
+- Added CDN caching with local fallback.
+- Enhanced UI with the Blood-of-Sun theme.
+- Introduced a metrics bar for displaying installation stats.
+- Improved classification for multisite plugins.
+
+### **2.0**
+- Added multisite support.
+- Introduced deletion features for unused plugins and themes.
+- Categorized active plugins/themes.
+
+---
+
+## Support
+
+For questions or feedback, contact **[Aaditya Uzumaki](https://goenka.xyz)**. Suggestions are always welcome!
+
+---
