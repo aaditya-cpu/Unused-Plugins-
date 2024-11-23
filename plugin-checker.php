@@ -2,7 +2,7 @@
 /*
 Plugin Name: Unused Plugins and Themes Checker
 Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite network.
-Version: 2.3
+Version: 1.9
 Author: Aaditya Uzumaki 
 Website: https://goenka.xyz
 */
@@ -25,91 +25,90 @@ function uptc_enqueue_assets($hook_suffix) {
         wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js', ['jquery'], null, true);
 
         // Inline styles for clay morphic/glass design with exact provided colors
-wp_add_inline_style('bootstrap-css', '
-    #uptc-unused-plugins-themes-page {
-        background: #540B0E; /* Base blood-of-Sun-1 */
-        padding: 20px;
-        border-radius: 20px;
-        backdrop-filter: blur(10px);
-        box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.3), -10px -10px 30px rgba(255, 243, 176, 0.5);
-        font-family: "Raleway", sans-serif;
-    }
-    #uptc-unused-plugins-themes-page h1, 
-    #uptc-unused-plugins-themes-page h2, 
-    #uptc-unused-plugins-themes-page h3 {
-        color: #E09F3E; /* Base blood-of-Sun-5 */
-        font-family: "Playfair Display", serif;
-    }
-    .metrics-bar {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        background: rgba(166, 46, 56, 0.25); /* Base blood-of-Sun-2 with transparency */
-        border-radius: 15px;
-        padding: 20px;
-        backdrop-filter: blur(15px);
-        box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.2), -10px -10px 30px rgba(255, 243, 176, 0.3);
-        color: #335C67; /* Base blood-of-Sun-3 */
-        margin-bottom: 30px;
-    }
-    .metrics-bar div {
-        flex: 1;
-        text-align: center;
-        font-weight: 600;
-    }
-    .metrics-bar div span {
-        display: block;
-        font-size: 1.5rem;
-        font-family: "EB Garamond", serif;
-        color: #540B0E; /* Base blood-of-Sun-1 */
-    }
-    table.table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0 15px;
-    }
-    .table-striped tbody tr {
-        background: rgba(51, 92, 103, 0.25); /* Base blood-of-Sun-3 with transparency */
-        backdrop-filter: blur(5px);
-        border-radius: 15px;
-        color: #FFF3B0; /* Base blood-of-Sun-4 */
-        transition: all 0.3s ease;
-    }
-    .table-striped tbody tr:hover {
-        background: rgba(224, 159, 62, 0.3); /* Base blood-of-Sun-5 with transparency */
-        transform: scale(1.02);
-    }
-    .table-striped th {
-        background: rgba(166, 46, 56, 0.5); /* Base blood-of-Sun-2 with transparency */
-        color: #FFF3B0; /* Base blood-of-Sun-4 */
-        border: none;
-        font-family: "Playfair Display", serif;
-        text-align: center;
-    }
-    .btn-danger {
-        background-color: #A62E38; /* Base blood-of-Sun-2 */
-        border: none;
-        box-shadow: 5px 5px 15px rgba(51, 92, 103, 0.5), -5px -5px 15px rgba(255, 243, 176, 0.5);
-        transition: all 0.3s ease;
-        font-family: "EB Garamond", serif;
-        color: #FFF3B0; /* Base blood-of-Sun-4 */
-    }
-    .btn-danger:hover {
-        background-color: #540B0E; /* Base blood-of-Sun-1 */
-        color: #FFF3B0; /* Base blood-of-Sun-4 */
-        transform: scale(1.05);
-    }
-    .select-all {
-        cursor: pointer;
-    }
-    footer {
-        margin-top: 20px;
-        text-align: center;
-        color: #FFF3B0; /* Base blood-of-Sun-4 */
-        font-family: "Raleway", sans-serif;
-    }
-');
-
+        wp_add_inline_style('bootstrap-css', '
+            #uptc-unused-plugins-themes-page {
+                background: #540B0E; /* Base blood-of-Sun-1 */
+                padding: 20px;
+                border-radius: 20px;
+                backdrop-filter: blur(10px);
+                box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.3), -10px -10px 30px rgba(255, 243, 176, 0.5);
+                font-family: "Raleway", sans-serif;
+            }
+            #uptc-unused-plugins-themes-page h1, 
+            #uptc-unused-plugins-themes-page h2, 
+            #uptc-unused-plugins-themes-page h3 {
+                color: #E09F3E; /* Base blood-of-Sun-5 */
+                font-family: "Playfair Display", serif;
+            }
+            .metrics-bar {
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                background: #335C67; /* Base blood-of-Sun-2 with transparency */
+                border-radius: 15px;
+                padding: 20px;
+                backdrop-filter: blur(15px);
+                box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.2), -10px -10px 30px rgba(255, 243, 176, 0.3);
+                color: #335C67; /* Base blood-of-Sun-3 */
+                margin-bottom: 30px;
+            }
+            .metrics-bar div {
+                flex: 1;
+                text-align: center;
+                font-weight: 600;
+            }
+            .metrics-bar div span {
+                display: block;
+                font-size: 1.5rem;
+                font-family: "EB Garamond", serif;
+                color: #FFF3B0; /* Base blood-of-Sun-1 */
+            }
+            table.table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0 15px;
+            }
+            .table-striped tbody tr {
+                background: #335C67; /* Base blood-of-Sun-3 */
+                border-radius: 15px;
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
+                transition: all 0.3s ease;
+                backdrop-filter: blur(5px);
+            }
+            .table-striped tbody tr:hover {
+                background: rgba(224, 159, 62, 0.3); /* Base blood-of-Sun-5 with transparency */
+                transform: scale(1.02);
+            }
+            .table-striped th {
+                background: #A62E38; /* Base blood-of-Sun-2 */
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
+                border: none;
+                font-family: "Playfair Display", serif;
+                text-align: center;
+            }
+            .btn {
+                background-color: #A62E38; /* Base blood-of-Sun-2 */
+                border: none;
+                box-shadow: 5px 5px 15px rgba(51, 92, 103, 0.5), -5px -5px 15px rgba(255, 243, 176, 0.5);
+                transition: all 0.3s ease;
+                font-family: "EB Garamond", serif;
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
+            }
+            .btn:hover {
+                background-color: #540B0E; /* Base blood-of-Sun-1 */
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
+                transform: scale(1.05);
+            }
+            .select-all {
+                cursor: pointer;
+            }
+            footer {
+                margin-top: 20px;
+                text-align: center;
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
+                font-family: "Raleway", sans-serif;
+            }
+        ');
 
         // Inline script for DataTables initialization
         wp_add_inline_script('datatables-js', '
@@ -266,6 +265,25 @@ function uptc_display_unused_plugins_themes() {
     } else {
         echo '<p>All installed plugins are currently in use.</p>';
     }
+
+    // Unused themes table
+    echo '<h2>Unused Themes</h2>';
+    if (!empty($unused_themes)) {
+        echo '<table class="table table-striped data-table">';
+        echo '<thead><tr><th>Theme</th><th>Theme Name</th></tr></thead>';
+        echo '<tbody>';
+        foreach ($unused_themes as $theme) {
+            echo '<tr>';
+            echo '<td>' . esc_html($theme) . '</td>';
+            echo '<td>' . esc_html($all_themes[$theme]->get('Name')) . '</td>';
+            echo '</tr>';
+        }
+        echo '</tbody>';
+        echo '</table>';
+    } else {
+        echo '<p>All installed themes are currently in use.</p>';
+    }
+
     echo '</div>';
 }
 ?>
