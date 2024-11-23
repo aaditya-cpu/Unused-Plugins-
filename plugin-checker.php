@@ -2,7 +2,7 @@
 /*
 Plugin Name: Unused Plugins and Themes Checker
 Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite network.
-Version: 1.9
+Version: 2.0
 Author: Aaditya Uzumaki 
 Website: https://goenka.xyz
 */
@@ -174,22 +174,37 @@ function uptc_display_unused_plugins_themes() {
     $active_themes = array();
 
     $network_active_plugins = is_multisite() ? array_keys(get_site_option('active_sitewide_plugins', [])) : [];
-    $sites = get_sites();
 
-    foreach ($sites as $site) {
-        switch_to_blog($site->blog_id);
+    // Conditional handling for multisite and single-site installations
+    if (is_multisite()) {
+        $sites = get_sites();
 
+        foreach ($sites as $site) {
+            switch_to_blog($site->blog_id);
+
+            $site_active_plugins = get_option('active_plugins', array());
+            $active_plugins[$site->blog_id] = $site_active_plugins;
+
+            $site_theme = wp_get_theme();
+            $active_themes[$site->blog_id] = array(
+                'name' => $site_theme->get('Name'),
+                'stylesheet' => $site_theme->get_stylesheet(),
+                'template' => $site_theme->get_template()
+            );
+
+            restore_current_blog();
+        }
+    } else {
+        // For single-site installations, only the current site's plugins and theme are relevant
         $site_active_plugins = get_option('active_plugins', array());
-        $active_plugins[$site->blog_id] = $site_active_plugins;
+        $active_plugins[1] = $site_active_plugins;
 
         $site_theme = wp_get_theme();
-        $active_themes[$site->blog_id] = array(
+        $active_themes[1] = array(
             'name' => $site_theme->get('Name'),
             'stylesheet' => $site_theme->get_stylesheet(),
             'template' => $site_theme->get_template()
         );
-
-        restore_current_blog();
     }
 
     $all_plugin_keys = array_keys($all_plugins);
@@ -226,7 +241,8 @@ function uptc_display_unused_plugins_themes() {
             $sites_using_plugin = [];
             foreach ($active_plugins as $blog_id => $plugins) {
                 if (in_array($plugin_file, $plugins)) {
-                    $sites_using_plugin[] = get_blog_details($blog_id)->blogname;
+                    $site_name = is_multisite() ? get_blog_details($blog_id)->blogname : get_option('blogname');
+                    $sites_using_plugin[] = $site_name;
                 }
             }
             $type = in_array($plugin_file, $network_active_plugins) ? 'Network Active' : 'Site Active';
