@@ -1,44 +1,144 @@
-=== Unused Plugins and Themes Checker ===
-Contributors: aaditya_uzumaki
-Tags: multisite, plugins, themes, unused, network, admin, analytics, delete
-Requires at least: 5.0
-Tested up to: 6.5
-Requires PHP: 7.4
-Stable tag: 1.2
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Unused Plugins and Themes Checker
 
-A plugin to identify and delete unused plugins and themes in a WordPress multisite network, providing analytics and details about active plugins and themes.
+Version: 2.1
+Author: Aaditya Uzumaki
+Website: goenka.xyz
+Description
 
-== Description ==
+The Unused Plugins and Themes Checker plugin helps you manage your WordPress installation by identifying and deleting unused plugins and themes. It works seamlessly with both single-site and multisite installations, offering advanced metrics and classifications for better decision-making.
+Features
 
-The Unused Plugins and Themes Checker plugin is designed to help network administrators of WordPress multisite networks identify unused plugins and themes. This plugin provides a comprehensive overview of which plugins and themes are active on which sites, how many sites use each plugin/theme, and highlights unused ones. Additionally, it allows the deletion of unused plugins in batches of 20 upon manual confirmation.
+    Advanced Metrics Bar: Displays installation type, disk usage, database table count, and database size.
+    Plugin Classification: Differentiates between Network Active and Site Active plugins in multisite installations.
+    Unused Plugin and Theme Detection: Scans for unused plugins and themes, presenting them for easy management.
+    CDN Caching: Caches CSS and JavaScript files locally after the first load, with priority to CDN files initially.
+    User-Friendly Interface: Clean, responsive design styled with the "Blood-of-Sun" theme.
+    Deletion Features: Allows safe and easy deletion of unused plugins and themes.
 
-= Features =
+License
 
-* Displays a list of all active plugins and the sites they are active on.
-* Shows a list of unused plugins across the multisite network with an option to delete them in batches.
-* Lists all active themes and the sites they are active on.
-* Highlights unused themes across the network.
-* Provides analytics with counts of active instances for plugins and themes.
-* Includes details about parent and child themes.
-* Styled with Bootstrap for a clean and responsive interface.
+This plugin is licensed under the Attribution Assurance License (AAL). You may modify, distribute, or use the plugin in your projects under the following conditions:
 
-== Installation ==
+    Attribution: You must give appropriate credit to the original author, Aaditya Uzumaki, by including the original plugin name and author details in any derivative works or distributions.
+    License Inclusion: The same license must apply to derivative works, ensuring that others can benefit under the same terms.
 
-1. Upload the plugin files to the `/wp-content/plugins/unused-plugins-themes-checker` directory, or install the plugin through the WordPress plugins screen directly.
-2. Activate the plugin through the 'Plugins' screen in WordPress.
-3. Navigate to the network admin dashboard.
-4. Under the 'Settings' menu, find 'Unused Plugins/Themes' to view the analytics and details.
+SPDX-License-Identifier: AAL-1.0
 
-== Changelog ==
+For details, visit the AAL License.
+Explanation of Classes and Program Flow
+Classes and Their Responsibilities
+UnusedPluginsThemesChecker
 
-= 1.2 =
-* Added the ability to delete unused plugins in batches of 20.
-* Improved user interface with checkboxes and manual confirmation for deletions.
+The main class of the plugin encapsulates all features and handles the following responsibilities:
 
-= 1.1 =
-* Added Bootstrap for better table styling.
-* Displayed counts of active instances for plugins and themes.
-* Included details about parent and child themes.
-* Improved overall analytics presentation
+    __construct():
+        Detects if the installation is multisite or single-site.
+        Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
+        Initiates CDN caching during the first admin initialization.
+
+    enqueue_assets():
+        Loads styles and scripts, prioritizing CDN files unless locally cached.
+        Adds inline styles and JavaScript for a polished UI.
+
+    add_menu_page():
+        Adds a menu page to the admin or network admin dashboard, depending on the installation type.
+
+    process_deletions():
+        Deletes selected unused plugins and themes based on user input.
+
+    get_metrics():
+        Fetches key installation metrics, including:
+            Installation type (single-site or multisite).
+            Disk usage.
+            Number of database tables.
+            Total database size.
+
+    get_active_items():
+        Retrieves active plugins and themes, grouped by site for multisite installations.
+
+    render_admin_page():
+        Generates the admin page, including:
+            A metrics bar with key statistics.
+            A table of active plugins/themes.
+            A section for unused plugins/themes with deletion options.
+
+    render_table():
+        Displays active plugins/themes with associated sites, database tables, and classifications (e.g., "Network Active" or "Site Active").
+
+    render_unused_section():
+        Displays unused plugins/themes for review and deletion.
+
+    cache_cdn_files():
+        Downloads and caches CSS/JS files locally from CDN sources during the first run.
+        Uses cached files for subsequent plugin loads.
+
+Program Flow
+
+    Initialization:
+        The UnusedPluginsThemesChecker class is instantiated during plugin activation.
+        It determines the installation type and registers hooks.
+
+    Asset Loading:
+        Enqueues styles and scripts, prioritizing CDN files unless cached locally.
+
+    Admin Menu:
+        Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
+
+    Interface Rendering:
+        Displays:
+            Metrics bar for installation statistics.
+            Tables of active and unused plugins/themes.
+            Buttons for managing and deleting unused items.
+
+    Deletion Workflow:
+        Allows users to select and delete unused plugins/themes safely.
+
+    CDN Caching:
+        Downloads CSS/JS files from CDN sources on the first admin initialization.
+        Serves cached files for subsequent loads to improve performance.
+
+Installation
+From WordPress Admin:
+
+    Navigate to Plugins > Add New.
+    Click Upload Plugin.
+    Upload the plugin ZIP file and click Install Now.
+    Once installed, click Activate.
+
+Manual Installation:
+
+    Upload the plugin folder to /wp-content/plugins/.
+    Activate the plugin via the Plugins menu in WordPress.
+
+Usage
+For Single-Site Installations:
+
+    Navigate to the Admin Dashboard.
+    Click Unused Items in the menu.
+    Review active and unused plugins/themes.
+    Delete unused plugins/themes as needed.
+
+For Multisite Installations:
+
+    Navigate to the Network Admin Dashboard.
+    Click Unused Plugins/Themes in the menu.
+    Review active and unused plugins/themes network-wide.
+    Delete unused items as needed.
+
+Changelog
+2.1 (Latest Release)
+
+    Added CDN caching with local fallback.
+    Enhanced UI with the Blood-of-Sun theme.
+    Introduced a metrics bar for displaying installation stats.
+    Improved classification for multisite plugins.
+
+2.0
+
+    Added multisite support.
+    Introduced deletion features for unused plugins and themes.
+    Categorized active plugins/themes.
+
+Support
+
+For questions or feedback, contact Aaditya Uzumaki. Suggestions are always welcome!
