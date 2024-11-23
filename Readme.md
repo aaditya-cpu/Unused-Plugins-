@@ -17,7 +17,6 @@ The **Unused Plugins and Themes Checker** plugin helps you manage your WordPress
 - **Advanced Metrics Bar**: Displays installation type, disk usage, database table count, and database size.
 - **Plugin Classification**: Differentiates between **Network Active** and **Site Active** plugins in multisite installations.
 - **Unused Plugin and Theme Detection**: Scans for unused plugins and themes, presenting them for easy management.
-- **CDN Caching**: Caches CSS and JavaScript files locally after the first load, with priority to CDN files initially.
 - **User-Friendly Interface**: Clean, responsive design styled with the "Blood-of-Sun" theme.
 - **Deletion Features**: Allows safe and easy deletion of unused plugins and themes.
 
@@ -46,10 +45,9 @@ The main class of the plugin encapsulates all features and handles the following
 - **`__construct()`**:
   - Detects if the installation is multisite or single-site.
   - Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
-  - Initiates CDN caching during the first admin initialization.
 
 - **`enqueue_assets()`**:
-  - Loads styles and scripts, prioritizing CDN files unless locally cached.
+  - Loads styles and scripts for the plugin.
   - Adds inline styles and JavaScript for a polished UI.
 
 - **`add_menu_page()`**:
@@ -80,10 +78,6 @@ The main class of the plugin encapsulates all features and handles the following
 - **`render_unused_section()`**:
   - Displays unused plugins/themes for review and deletion.
 
-- **`cache_cdn_files()`**:
-  - Downloads and caches CSS/JS files locally from CDN sources during the first run.
-  - Uses cached files for subsequent plugin loads.
-
 ---
 
 ### **Program Flow**
@@ -93,7 +87,7 @@ The main class of the plugin encapsulates all features and handles the following
    - It determines the installation type and registers hooks.
 
 2. **Asset Loading**:
-   - Enqueues styles and scripts, prioritizing CDN files unless cached locally.
+   - Enqueues styles and scripts for the admin interface.
 
 3. **Admin Menu**:
    - Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
@@ -106,10 +100,6 @@ The main class of the plugin encapsulates all features and handles the following
 
 5. **Deletion Workflow**:
    - Allows users to select and delete unused plugins/themes safely.
-
-6. **CDN Caching**:
-   - Downloads CSS/JS files from CDN sources on the first admin initialization.
-   - Serves cached files for subsequent loads to improve performance.
 
 ---
 
@@ -150,7 +140,6 @@ The main class of the plugin encapsulates all features and handles the following
 ## Changelog
 
 ### **2.1** (Latest Release)
-- Added CDN caching with local fallback.
 - Enhanced UI with the Blood-of-Sun theme.
 - Introduced a metrics bar for displaying installation stats.
 - Improved classification for multisite plugins.
