@@ -2,7 +2,7 @@
 /*
 Plugin Name: Unused Plugins and Themes Checker
 Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite network.
-Version: 2.0
+Version: 2.2
 Author: Aaditya Uzumaki 
 Website: https://goenka.xyz
 */
@@ -10,7 +10,6 @@ Website: https://goenka.xyz
 // Enqueue Styles and Scripts
 add_action('admin_enqueue_scripts', 'uptc_enqueue_assets');
 function uptc_enqueue_assets($hook_suffix) {
-    // Only load assets on the plugin page
     if ($hook_suffix === 'toplevel_page_uptc-unused-plugins-themes') {
         // Enqueue Google Fonts
         wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;700&family=EB+Garamond:wght@400;700&display=swap', [], null);
@@ -33,6 +32,8 @@ function uptc_enqueue_assets($hook_suffix) {
                 backdrop-filter: blur(10px);
                 box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.3), -10px -10px 30px rgba(255, 243, 176, 0.5);
                 font-family: "Raleway", sans-serif;
+                position: relative;
+                min-height: 380px;
             }
             #uptc-unused-plugins-themes-page h1, 
             #uptc-unused-plugins-themes-page h2, 
@@ -44,12 +45,12 @@ function uptc_enqueue_assets($hook_suffix) {
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
-                background: #335C67; /* Base blood-of-Sun-2 with transparency */
+                background: #335C67; /* Base blood-of-Sun-3 */
                 border-radius: 15px;
                 padding: 20px;
                 backdrop-filter: blur(15px);
                 box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.2), -10px -10px 30px rgba(255, 243, 176, 0.3);
-                color: #335C67; /* Base blood-of-Sun-3 */
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
                 margin-bottom: 30px;
             }
             .metrics-bar div {
@@ -61,7 +62,7 @@ function uptc_enqueue_assets($hook_suffix) {
                 display: block;
                 font-size: 1.5rem;
                 font-family: "EB Garamond", serif;
-                color: #FFF3B0; /* Base blood-of-Sun-1 */
+                color: #FFF3B0; /* Base blood-of-Sun-4 */
             }
             table.table {
                 width: 100%;
@@ -108,15 +109,33 @@ function uptc_enqueue_assets($hook_suffix) {
                 color: #FFF3B0; /* Base blood-of-Sun-4 */
                 font-family: "Raleway", sans-serif;
             }
+            #loader {
+                width: 80px;
+                height: 40px;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                margin: -20px -40px;
+                z-index: 1000;
+                display: none;
+            }
         ');
 
-        // Inline script for DataTables initialization
+        // Inline script for DataTables initialization and loader display
         wp_add_inline_script('datatables-js', '
             jQuery(document).ready(function($) {
                 $(".data-table").DataTable();
                 $(".select-all").on("click", function() {
                     var table = $(this).closest("table");
                     $("input[type=\'checkbox\']", table).prop("checked", this.checked);
+                });
+
+                $("form").on("submit", function() {
+                    $("#loader").fadeIn();
+                });
+
+                $(window).on("beforeunload", function() {
+                    $("#loader").fadeIn();
                 });
             });
         ');
@@ -139,8 +158,8 @@ function uptc_add_menu_page() {
     );
 }
 
-// Function to delete selected plugins
-function uptc_delete_plugins() {
+// Function to delete selected plugins and themes
+function uptc_delete_plugins_themes() {
     if (isset($_POST['delete_plugins']) && isset($_POST['unused_plugins']) && check_admin_referer('uptc_delete_plugins_action', 'uptc_nonce_field')) {
         require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -160,9 +179,26 @@ function uptc_delete_plugins() {
             }
         }
     }
+
+    if (isset($_POST['delete_themes']) && isset($_POST['unused_themes']) && check_admin_referer('uptc_delete_plugins_action', 'uptc_nonce_field')) {
+        require_once ABSPATH . 'wp-admin/includes/theme.php';
+
+        $themes_to_delete = $_POST['unused_themes'];
+        foreach ($themes_to_delete as $theme) {
+            if (wp_get_theme($theme)->exists()) {
+                $result = delete_theme($theme); // Delete the theme
+
+                if (is_wp_error($result)) {
+                    error_log('Failed to delete theme: ' . $theme . ' Error: ' . $result->get_error_message());
+                } else {
+                    error_log('Successfully deleted theme: ' . $theme);
+                }
+            }
+        }
+    }
 }
 
-add_action('admin_init', 'uptc_delete_plugins');
+add_action('admin_init', 'uptc_delete_plugins_themes');
 
 // Function to display unused plugins and themes
 function uptc_display_unused_plugins_themes() {
@@ -175,7 +211,6 @@ function uptc_display_unused_plugins_themes() {
 
     $network_active_plugins = is_multisite() ? array_keys(get_site_option('active_sitewide_plugins', [])) : [];
 
-    // Conditional handling for multisite and single-site installations
     if (is_multisite()) {
         $sites = get_sites();
 
@@ -195,7 +230,6 @@ function uptc_display_unused_plugins_themes() {
             restore_current_blog();
         }
     } else {
-        // For single-site installations, only the current site's plugins and theme are relevant
         $site_active_plugins = get_option('active_plugins', array());
         $active_plugins[1] = $site_active_plugins;
 
@@ -219,6 +253,15 @@ function uptc_display_unused_plugins_themes() {
     $unused_themes = array_diff($all_theme_keys, $used_themes);
 
     echo '<div class="wrap" id="uptc-unused-plugins-themes-page">';
+    echo '<div id="loader">
+            <div class="ls-particles ls-part-1"></div>
+            <div class="ls-particles ls-part-2"></div>
+            <div class="ls-particles ls-part-3"></div>
+            <div class="ls-particles ls-part-4"></div>
+            <div class="ls-particles ls-part-5"></div>
+            <div class="lightsaber ls-left ls-green"></div>
+            <div class="lightsaber ls-right ls-red"></div>
+          </div>';
     echo '<h1>Unused Plugins and Themes</h1>';
 
     // Metrics Bar
@@ -282,20 +325,25 @@ function uptc_display_unused_plugins_themes() {
         echo '<p>All installed plugins are currently in use.</p>';
     }
 
-    // Unused themes table
+    // Unused themes table with checkboxes
     echo '<h2>Unused Themes</h2>';
     if (!empty($unused_themes)) {
+        echo '<form method="post">';
+        wp_nonce_field('uptc_delete_plugins_action', 'uptc_nonce_field');
         echo '<table class="table table-striped data-table">';
-        echo '<thead><tr><th>Theme</th><th>Theme Name</th></tr></thead>';
+        echo '<thead><tr><th><input type="checkbox" class="select-all"></th><th>Theme</th><th>Theme Name</th></tr></thead>';
         echo '<tbody>';
         foreach ($unused_themes as $theme) {
             echo '<tr>';
+            echo '<td><input type="checkbox" name="unused_themes[]" value="' . esc_attr($theme) . '"></td>';
             echo '<td>' . esc_html($theme) . '</td>';
             echo '<td>' . esc_html($all_themes[$theme]->get('Name')) . '</td>';
             echo '</tr>';
         }
         echo '</tbody>';
         echo '</table>';
+        echo '<p><input type="submit" name="delete_themes" class="btn btn-danger mt-3" value="Delete Selected Themes"></p>';
+        echo '</form>';
     } else {
         echo '<p>All installed themes are currently in use.</p>';
     }
