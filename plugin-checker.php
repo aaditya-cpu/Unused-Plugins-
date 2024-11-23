@@ -1,167 +1,117 @@
 <?php
 /*
 Plugin Name: Unused Plugins and Themes Checker
-Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite or single-site installation, with advanced metrics and classification.
-Version: 2.1
-Author: Aaditya Uzumaki
+Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite network.
+Version: 2.3
+Author: Aaditya Uzumaki 
 Website: https://goenka.xyz
 */
 
-class UnusedPluginsThemesChecker {
+// Enqueue Styles and Scripts
+add_action('admin_enqueue_scripts', 'uptc_enqueue_assets');
+function uptc_enqueue_assets($hook_suffix) {
+    // Only load assets on the plugin page
+    if ($hook_suffix === 'toplevel_page_uptc-unused-plugins-themes') {
+        // Enqueue Google Fonts
+        wp_enqueue_style('google-fonts', 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;700&family=EB+Garamond:wght@400;700&display=swap', [], null);
 
-    protected $is_multisite;
-
-    public function __construct() {
-        $this->is_multisite = is_multisite();
-
-        // Initialize actions
-        add_action('admin_enqueue_scripts', [$this, 'enqueue_assets']);
-        add_action($this->is_multisite ? 'network_admin_menu' : 'admin_menu', [$this, 'add_menu_page']);
-        add_action('admin_init', [$this, 'process_deletions']);
-    }
-
-    /**
-     * Enqueue styles and scripts
-     */
-    public function enqueue_assets() {
+        // Enqueue Bootstrap CSS and DataTables
         wp_enqueue_style('bootstrap-css', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-        wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', [], null, true);
         wp_enqueue_style('datatables-css', 'https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css');
+        
+        // Enqueue Scripts
         wp_enqueue_script('jquery');
+        wp_enqueue_script('bootstrap-js', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js', [], null, true);
         wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js', ['jquery'], null, true);
 
+        // Inline styles for clay morphic/glass design with exact provided colors
 wp_add_inline_style('bootstrap-css', '
-    body {
-        background-color: #540B0E; /* Blood-of-Sun theme */
-        color: #FFF3B0;
+    #uptc-unused-plugins-themes-page {
+        background: #540B0E; /* Base blood-of-Sun-1 */
+        padding: 20px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.3), -10px -10px 30px rgba(255, 243, 176, 0.5);
         font-family: "Raleway", sans-serif;
     }
-    h1, h2, h3, h4, h5, h6 {
-        color: #FFF3B0;
+    #uptc-unused-plugins-themes-page h1, 
+    #uptc-unused-plugins-themes-page h2, 
+    #uptc-unused-plugins-themes-page h3 {
+        color: #E09F3E; /* Base blood-of-Sun-5 */
         font-family: "Playfair Display", serif;
     }
-    .data-table, .data-table th, .data-table td {
-        background-color: #A62E38;
-        color: #FFF3B0;
-        border-color: #335C67;
-    }
-    .dataTables_wrapper .dataTables_filter input, 
-    .dataTables_wrapper .dataTables_length select {
-        background-color: #FFF3B0;
-        border: 1px solid #A62E38;
-        color: #540B0E;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button {
-        background-color: #A62E38;
-        border: 1px solid #540B0E;
-        color: #FFF3B0;
-    }
-    .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background-color: #E09F3E;
-        color: #540B0E;
-    }
-    /* Buttons */
-    button, .btn {
-        background-color: #335C67 !important; /* Theme-specific color */
-        border-color: #335C67 !important;
-        color: #FFF3B0 !important;
-        font-family: "EB Garamond", serif;
-    }
-    button:hover, .btn:hover {
-        background-color: #A62E38 !important; /* On hover */
-        border-color: #A62E38 !important;
-        color: #FFF3B0 !important;
-    }
-    .btn-danger {
-        background-color: #A62E38 !important; /* Danger button */
-        border-color: #A62E38 !important;
-    }
-    .btn-danger:hover {
-        background-color: #540B0E !important; /* Hover effect for danger */
-        border-color: #540B0E !important;
-    }
-    /* Metrics Bar */
     .metrics-bar {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         align-items: center;
-        background: #335C67; /* Base Blood-of-Sun Theme */
-        padding: 10px 20px;
-        border-radius: 8px;
-        color: #FFF3B0;
-        font-family: "Raleway", sans-serif;
-        margin-bottom: 20px;
+        background: rgba(166, 46, 56, 0.25); /* Base blood-of-Sun-2 with transparency */
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(15px);
+        box-shadow: 10px 10px 30px rgba(51, 92, 103, 0.2), -10px -10px 30px rgba(255, 243, 176, 0.3);
+        color: #335C67; /* Base blood-of-Sun-3 */
+        margin-bottom: 30px;
     }
     .metrics-bar div {
         flex: 1;
         text-align: center;
-        font-size: 1rem;
         font-weight: 600;
-    }
-    .metrics-bar div:not(:last-child) {
-        border-right: 1px solid #A62E38; /* Separator */
     }
     .metrics-bar div span {
         display: block;
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #FFF3B0;
+        font-size: 1.5rem;
+        font-family: "EB Garamond", serif;
+        color: #540B0E; /* Base blood-of-Sun-1 */
+    }
+    table.table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 15px;
+    }
+    .table-striped tbody tr {
+        background: rgba(51, 92, 103, 0.25); /* Base blood-of-Sun-3 with transparency */
+        backdrop-filter: blur(5px);
+        border-radius: 15px;
+        color: #FFF3B0; /* Base blood-of-Sun-4 */
+        transition: all 0.3s ease;
+    }
+    .table-striped tbody tr:hover {
+        background: rgba(224, 159, 62, 0.3); /* Base blood-of-Sun-5 with transparency */
+        transform: scale(1.02);
+    }
+    .table-striped th {
+        background: rgba(166, 46, 56, 0.5); /* Base blood-of-Sun-2 with transparency */
+        color: #FFF3B0; /* Base blood-of-Sun-4 */
+        border: none;
         font-family: "Playfair Display", serif;
+        text-align: center;
     }
-    /* Loader */
-    .loader {
-        animation: rotate 1s infinite;
-        height: 50px;
-        width: 50px;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        z-index: 1000;
-        display: none;
+    .btn-danger {
+        background-color: #A62E38; /* Base blood-of-Sun-2 */
+        border: none;
+        box-shadow: 5px 5px 15px rgba(51, 92, 103, 0.5), -5px -5px 15px rgba(255, 243, 176, 0.5);
+        transition: all 0.3s ease;
+        font-family: "EB Garamond", serif;
+        color: #FFF3B0; /* Base blood-of-Sun-4 */
     }
-    .loader:before, .loader:after {
-        border-radius: 50%;
-        content: "";
-        display: block;
-        height: 20px;
-        width: 20px;
+    .btn-danger:hover {
+        background-color: #540B0E; /* Base blood-of-Sun-1 */
+        color: #FFF3B0; /* Base blood-of-Sun-4 */
+        transform: scale(1.05);
     }
-    .loader:before {
-        animation: ball1 1s infinite;
-        background-color: #540B0E;
-        box-shadow: 30px 0 0 #A62E38;
-        margin-bottom: 10px;
-    }
-    .loader:after {
-        animation: ball2 1s infinite;
-        background-color: #335C67;
-        box-shadow: 30px 0 0 #E09F3E;
-    }
-    @keyframes rotate {
-        0%, 100% { transform: rotate(0deg) scale(0.8); }
-        50% { transform: rotate(360deg) scale(1.2); }
-    }
-    @keyframes ball1 {
-        0% { box-shadow: 30px 0 0 #A62E38; }
-        50% { box-shadow: 0 0 0 #A62E38; transform: translate(15px, 15px); }
-        100% { box-shadow: 30px 0 0 #A62E38; }
-    }
-    @keyframes ball2 {
-        0% { box-shadow: 30px 0 0 #E09F3E; }
-        50% { box-shadow: 0 0 0 #E09F3E; transform: translate(15px, 15px); }
-        100% { box-shadow: 30px 0 0 #E09F3E; }
+    .select-all {
+        cursor: pointer;
     }
     footer {
         margin-top: 20px;
         text-align: center;
-        color: #FFF3B0;
+        color: #FFF3B0; /* Base blood-of-Sun-4 */
         font-family: "Raleway", sans-serif;
     }
 ');
 
 
-        // Inline scripts
+        // Inline script for DataTables initialization
         wp_add_inline_script('datatables-js', '
             jQuery(document).ready(function($) {
                 $(".data-table").DataTable();
@@ -172,173 +122,150 @@ wp_add_inline_style('bootstrap-css', '
             });
         ');
     }
+}
 
-    /**
-     * Add menu page
-     */
-    public function add_menu_page() {
-        $menu_title = $this->is_multisite ? 'Unused Plugins/Themes' : 'Unused Items';
-        add_menu_page(
-            'Unused Plugins and Themes',
-            $menu_title,
-            'manage_options',
-            'uptc-unused-plugins-themes',
-            [$this, 'render_admin_page'],
-            'dashicons-admin-plugins',
-            20
-        );
-    }
+// Hook to add a menu item in the network admin menu
+add_action('network_admin_menu', 'uptc_add_menu_page');
+add_action('admin_menu', 'uptc_add_menu_page');
 
-    /**
-     * Process plugin and theme deletions
-     */
-    public function process_deletions() {
-        if (isset($_POST['delete_plugins']) && isset($_POST['unused_plugins'])) {
-            foreach ($_POST['unused_plugins'] as $plugin) {
-                delete_plugins([$plugin]);
+function uptc_add_menu_page() {
+    add_menu_page(
+        'Unused Plugins and Themes',
+        'Unused Plugins/Themes',
+        'manage_options',
+        'uptc-unused-plugins-themes',
+        'uptc_display_unused_plugins_themes',
+        'dashicons-admin-plugins',
+        20
+    );
+}
+
+// Function to delete selected plugins
+function uptc_delete_plugins() {
+    if (isset($_POST['delete_plugins']) && isset($_POST['unused_plugins']) && check_admin_referer('uptc_delete_plugins_action', 'uptc_nonce_field')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+        $plugins_to_delete = $_POST['unused_plugins'];
+        foreach ($plugins_to_delete as $plugin) {
+            if (file_exists(WP_PLUGIN_DIR . '/' . $plugin)) {
+                if (is_plugin_active($plugin)) {
+                    deactivate_plugins($plugin); // Deactivate the plugin if it is active
+                }
+                $result = delete_plugins([$plugin]); // Delete the plugin
+
+                if (is_wp_error($result)) {
+                    error_log('Failed to delete plugin: ' . $plugin . ' Error: ' . $result->get_error_message());
+                } else {
+                    error_log('Successfully deleted plugin: ' . $plugin);
+                }
             }
-        }
-
-        if (isset($_POST['delete_themes']) && isset($_POST['unused_themes'])) {
-            foreach ($_POST['unused_themes'] as $theme) {
-                delete_theme($theme);
-            }
-        }
-    }
-
-    /**
-     * Get metrics for the top bar
-     */
-    protected function get_metrics() {
-        global $wpdb;
-
-        $installation_type = $this->is_multisite ? 'Multisite' : 'Single Site';
-        $disk_usage = size_format(disk_total_space(ABSPATH) - disk_free_space(ABSPATH));
-        $table_count = count($wpdb->get_results('SHOW TABLES'));
-        $table_size = $wpdb->get_var("
-            SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) 
-            FROM information_schema.TABLES 
-            WHERE table_schema = '" . DB_NAME . "'
-        ");
-
-        return [
-            'installation_type' => $installation_type,
-            'disk_usage' => $disk_usage,
-            'table_count' => $table_count,
-            'table_size' => "{$table_size} MB"
-        ];
-    }
-
-    /**
-     * Get active plugins and themes
-     */
-    protected function get_active_items() {
-        $plugins_by_site = [];
-        $themes_by_site = [];
-
-        if ($this->is_multisite) {
-            $sites = get_sites();
-            foreach ($sites as $site) {
-                switch_to_blog($site->blog_id);
-                $plugins_by_site[$site->blog_id] = get_option('active_plugins', []);
-                $themes_by_site[$site->blog_id] = wp_get_theme()->get_stylesheet();
-                restore_current_blog();
-            }
-        } else {
-            $plugins_by_site[1] = get_option('active_plugins', []);
-            $themes_by_site[1] = wp_get_theme()->get_stylesheet();
-        }
-
-        return [$plugins_by_site, $themes_by_site];
-    }
-
-    /**
-     * Render admin page
-     */
-    public function render_admin_page() {
-        $all_plugins = get_plugins();
-        $all_themes = wp_get_themes();
-        $network_active_plugins = $this->is_multisite ? array_keys(get_site_option('active_sitewide_plugins', [])) : [];
-
-        list($plugins_by_site, $themes_by_site) = $this->get_active_items();
-
-        $active_plugins = array_unique(array_merge($network_active_plugins, ...array_values($plugins_by_site)));
-        $used_themes = array_unique(array_values($themes_by_site));
-
-        $unused_plugins = array_diff(array_keys($all_plugins), $active_plugins);
-        $unused_themes = array_diff(array_keys($all_themes), $used_themes);
-
-        $metrics = $this->get_metrics();
-
-        echo '<div class="metrics-bar">';
-        foreach ($metrics as $label => $value) {
-            echo "<div><strong>{$label}:</strong><br>{$value}</div>";
-        }
-        echo '</div>';
-
-        $this->render_table('Active Plugins', $all_plugins, $plugins_by_site, $network_active_plugins, $active_plugins, true);
-        $this->render_unused_section('Unused Plugins', $unused_plugins, $all_plugins);
-        $this->render_unused_section('Unused Themes', $unused_themes, $all_themes);
-
-        echo '<footer class="mt-4">Created by <a href="https://goenka.xyz" target="_blank">Aaditya Uzumaki</a></footer>';
-    }
-
-    /**
-     * Render active plugins table
-     */
-    protected function render_table($title, $items, $items_by_site, $network_active, $active_items, $is_plugin = true) {
-        echo "<h2>{$title}</h2>";
-        echo '<table class="table table-bordered table-hover data-table">';
-        echo '<thead><tr><th>Name</th><th>Sites</th><th>Database Tables</th><th>Type</th></tr></thead>';
-        echo '<tbody>';
-
-        foreach ($items as $file => $data) {
-            if (in_array($file, $active_items)) {
-                $sites = array_keys(array_filter($items_by_site, fn($site_items) => in_array($file, $site_items)));
-                $db_table = 'wp_' . sanitize_key($file) . '_data';
-                $type = in_array($file, $network_active) ? 'Network Active' : 'Site Active';
-                echo '<tr>';
-                echo "<td>{$data['Name']}</td>";
-                echo '<td>' . implode(', ', $sites) . '</td>';
-                echo "<td>{$db_table}</td>";
-                echo "<td>{$type}</td>";
-                echo '</tr>';
-            }
-        }
-
-        echo '</tbody></table>';
-    }
-
-    /**
-     * Render unused plugins/themes section
-     */
-    protected function render_unused_section($title, $unused_items, $all_items) {
-        echo "<h2>{$title}</h2>";
-
-        if (!empty($unused_items)) {
-            echo '<form method="post">';
-            echo '<table class="table table-bordered table-hover data-table">';
-            echo '<thead><tr><th><input type="checkbox" class="select-all"></th><th>Name</th><th>Database Tables</th></tr></thead>';
-            echo '<tbody>';
-
-            foreach ($unused_items as $item) {
-                $db_table = 'wp_' . sanitize_key($item) . '_data';
-                echo '<tr>';
-                echo '<td><input type="checkbox" name="unused_' . strtolower($title) . '[]" value="' . esc_attr($item) . '"></td>';
-                echo '<td>' . esc_html($all_items[$item]['Name']) . '</td>';
-                echo "<td>{$db_table}</td>";
-                echo '</tr>';
-            }
-
-            echo '</tbody></table>';
-            echo '<button type="submit" name="delete_' . strtolower(str_replace(' ', '_', $title)) . '" class="btn btn-danger mt-3">Delete Selected ' . $title . '</button>';
-            echo '</form>';
-        } else {
-            echo "<p>All {$title} are in use.</p>";
         }
     }
 }
 
-// Initialize the plugin
-new UnusedPluginsThemesChecker();
+add_action('admin_init', 'uptc_delete_plugins');
+
+// Function to display unused plugins and themes
+function uptc_display_unused_plugins_themes() {
+    global $wpdb;
+
+    $all_plugins = get_plugins();
+    $active_plugins = array();
+    $all_themes = wp_get_themes();
+    $active_themes = array();
+
+    $network_active_plugins = is_multisite() ? array_keys(get_site_option('active_sitewide_plugins', [])) : [];
+    $sites = get_sites();
+
+    foreach ($sites as $site) {
+        switch_to_blog($site->blog_id);
+
+        $site_active_plugins = get_option('active_plugins', array());
+        $active_plugins[$site->blog_id] = $site_active_plugins;
+
+        $site_theme = wp_get_theme();
+        $active_themes[$site->blog_id] = array(
+            'name' => $site_theme->get('Name'),
+            'stylesheet' => $site_theme->get_stylesheet(),
+            'template' => $site_theme->get_template()
+        );
+
+        restore_current_blog();
+    }
+
+    $all_plugin_keys = array_keys($all_plugins);
+    $used_plugins = array_unique(array_merge($network_active_plugins, call_user_func_array('array_merge', $active_plugins)));
+    $unused_plugins = array_diff($all_plugin_keys, $used_plugins);
+
+    $all_theme_keys = array_keys($all_themes);
+    $used_themes = array();
+    foreach ($active_themes as $theme) {
+        $used_themes[] = $theme['stylesheet'];
+    }
+    $unused_themes = array_diff($all_theme_keys, $used_themes);
+
+    echo '<div class="wrap" id="uptc-unused-plugins-themes-page">';
+    echo '<h1>Unused Plugins and Themes</h1>';
+
+    // Metrics Bar
+    echo '<div class="metrics-bar">';
+    echo '<div><strong>Installation Type:</strong> <span>' . (is_multisite() ? 'Multisite' : 'Single Site') . '</span></div>';
+    echo '<div><strong>Disk Usage:</strong> <span>' . size_format(disk_total_space(ABSPATH) - disk_free_space(ABSPATH)) . '</span></div>';
+    $table_count = count($wpdb->get_results('SHOW TABLES'));
+    echo '<div><strong>Number of Tables:</strong> <span>' . $table_count . '</span></div>';
+    $table_size = $wpdb->get_var("SELECT ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) FROM information_schema.TABLES WHERE table_schema = '" . DB_NAME . "'");
+    echo '<div><strong>Total Table Size:</strong> <span>' . $table_size . ' MB</span></div>';
+    echo '</div>';
+
+    // Active plugins table
+    echo '<h2>Active Plugins</h2>';
+    echo '<table class="table table-striped data-table">';
+    echo '<thead><tr><th>Plugin</th><th>Sites</th><th>Database Table</th><th>Type</th></tr></thead>';
+    echo '<tbody>';
+    foreach ($all_plugins as $plugin_file => $plugin_data) {
+        if (in_array($plugin_file, $used_plugins)) {
+            $sites_using_plugin = [];
+            foreach ($active_plugins as $blog_id => $plugins) {
+                if (in_array($plugin_file, $plugins)) {
+                    $sites_using_plugin[] = get_blog_details($blog_id)->blogname;
+                }
+            }
+            $type = in_array($plugin_file, $network_active_plugins) ? 'Network Active' : 'Site Active';
+            $db_table = 'wp_' . sanitize_key($plugin_file) . '_data';
+
+            echo '<tr>';
+            echo '<td>' . esc_html($plugin_data['Name']) . ' (' . esc_html($plugin_file) . ')</td>';
+            echo '<td>' . implode(', ', $sites_using_plugin) . '</td>';
+            echo '<td>' . esc_html($db_table) . '</td>';
+            echo '<td>' . esc_html($type) . '</td>';
+            echo '</tr>';
+        }
+    }
+    echo '</tbody></table>';
+
+    // Unused plugins table with deletion option
+    echo '<h2>Unused Plugins</h2>';
+    if (!empty($unused_plugins)) {
+        echo '<form method="post">';
+        wp_nonce_field('uptc_delete_plugins_action', 'uptc_nonce_field');
+        echo '<table class="table table-striped data-table">';
+        echo '<thead><tr><th><input type="checkbox" class="select-all"></th><th>Plugin</th><th>Database Table</th></tr></thead>';
+        echo '<tbody>';
+        foreach ($unused_plugins as $plugin) {
+            $db_table = 'wp_' . sanitize_key($plugin) . '_data';
+            echo '<tr>';
+            echo '<td><input type="checkbox" name="unused_plugins[]" value="' . esc_attr($plugin) . '"></td>';
+            echo '<td>' . esc_html($all_plugins[$plugin]['Name']) . ' (' . esc_html($plugin) . ')</td>';
+            echo '<td>' . esc_html($db_table) . '</td>';
+            echo '</tr>';
+        }
+        echo '</tbody>';
+        echo '</table>';
+        echo '<p><input type="submit" name="delete_plugins" class="btn btn-danger mt-3" value="Delete Selected Plugins"></p>';
+        echo '</form>';
+    } else {
+        echo '<p>All installed plugins are currently in use.</p>';
+    }
+    echo '</div>';
+}
 ?>
