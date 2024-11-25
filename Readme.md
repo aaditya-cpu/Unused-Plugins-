@@ -1,158 +1,189 @@
-# Unused Plugins and Themes Checker
+Unused Plugins and Themes Checker
 
-**Version**: 2.1  
-**Author**: Aaditya Uzumaki  
-**Website**: [goenka.xyz](https://goenka.xyz)  
+Version: 2.2Author: Aaditya UzumakiWebsite: goenka.xyz
 
----
+Description
 
-## Description
+The Unused Plugins and Themes Checker plugin helps you manage your WordPress installation by identifying and deleting unused plugins and themes. It works seamlessly with both single-site and multisite installations, offering advanced metrics and classifications for better decision-making.
 
-The **Unused Plugins and Themes Checker** plugin helps you manage your WordPress installation by identifying and deleting unused plugins and themes. It works seamlessly with both single-site and multisite installations, offering advanced metrics and classifications for better decision-making.
+Features
 
----
+Advanced Metrics Bar: Displays installation type, disk usage, database table count, and database size.
 
-## Features
+Plugin Classification: Differentiates between Network Active and Site Active plugins in multisite installations.
 
-- **Advanced Metrics Bar**: Displays installation type, disk usage, database table count, and database size.
-- **Plugin Classification**: Differentiates between **Network Active** and **Site Active** plugins in multisite installations.
-- **Unused Plugin and Theme Detection**: Scans for unused plugins and themes, presenting them for easy management.
-- **User-Friendly Interface**: Clean, responsive design styled with the "Blood-of-Sun" theme.
-- **Deletion Features**: Allows safe and easy deletion of unused plugins and themes.
+Unused Plugin and Theme Detection: Scans for unused plugins and themes, presenting them for easy management.
 
----
+User-Friendly Interface: Clean, responsive design styled with the "Blood-of-Sun" theme.
 
-## License
+Deletion Features: Allows safe and easy deletion of unused plugins and themes.
 
-This plugin is licensed under the **Attribution Assurance License (AAL)**. You may modify, distribute, or use the plugin in your projects under the following conditions:
+License
 
-- **Attribution**: You must give appropriate credit to the original author, Aaditya Uzumaki, by including the original plugin name and author details in any derivative works or distributions.
-- **License Inclusion**: The same license must apply to derivative works, ensuring that others can benefit under the same terms.
+This plugin is licensed under the Attribution Assurance License (AAL). You may modify, distribute, or use the plugin in your projects under the following conditions:
 
-**SPDX-License-Identifier**: AAL-1.0  
+Attribution: You must give appropriate credit to the original author, Aaditya Uzumaki, by including the original plugin name and author details in any derivative works or distributions.
 
-For details, visit the [AAL License](https://opensource.org/licenses/AAL).
+License Inclusion: The same license must apply to derivative works, ensuring that others can benefit under the same terms.
 
----
+SPDX-License-Identifier: AAL-1.0
 
-## Explanation of Classes and Program Flow
+For details, visit the AAL License.
 
-### **Classes and Their Responsibilities**
+Explanation of Classes and Program Flow
 
-#### `UnusedPluginsThemesChecker`
+Classes and Their Responsibilities
+
+UnusedPluginsThemesChecker
+
 The main class of the plugin encapsulates all features and handles the following responsibilities:
 
-- **`__construct()`**:
-  - Detects if the installation is multisite or single-site.
-  - Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
+__construct():
 
-- **`enqueue_assets()`**:
-  - Loads styles and scripts for the plugin.
-  - Adds inline styles and JavaScript for a polished UI.
+Detects if the installation is multisite or single-site.
 
-- **`add_menu_page()`**:
-  - Adds a menu page to the admin or network admin dashboard, depending on the installation type.
+Registers WordPress hooks for enqueueing assets, creating menu pages, and handling deletions.
 
-- **`process_deletions()`**:
-  - Deletes selected unused plugins and themes based on user input.
+enqueue_assets():
 
-- **`get_metrics()`**:
-  - Fetches key installation metrics, including:
-    - Installation type (single-site or multisite).
-    - Disk usage.
-    - Number of database tables.
-    - Total database size.
+Loads styles and scripts for the plugin.
 
-- **`get_active_items()`**:
-  - Retrieves active plugins and themes, grouped by site for multisite installations.
+Adds inline styles and JavaScript for a polished UI.
 
-- **`render_admin_page()`**:
-  - Generates the admin page, including:
-    - A metrics bar with key statistics.
-    - A table of active plugins/themes.
-    - A section for unused plugins/themes with deletion options.
+add_menu_page():
 
-- **`render_table()`**:
-  - Displays active plugins/themes with associated sites, database tables, and classifications (e.g., "Network Active" or "Site Active").
+Adds a menu page to the admin or network admin dashboard, depending on the installation type.
 
-- **`render_unused_section()`**:
-  - Displays unused plugins/themes for review and deletion.
+process_deletions():
 
----
+Deletes selected unused plugins and themes based on user input.
 
-### **Program Flow**
+get_metrics():
 
-1. **Initialization**:
-   - The `UnusedPluginsThemesChecker` class is instantiated during plugin activation.
-   - It determines the installation type and registers hooks.
+Fetches key installation metrics, including:
 
-2. **Asset Loading**:
-   - Enqueues styles and scripts for the admin interface.
+Installation type (single-site or multisite).
 
-3. **Admin Menu**:
-   - Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
+Disk usage.
 
-4. **Interface Rendering**:
-   - Displays:
-     - Metrics bar for installation statistics.
-     - Tables of active and unused plugins/themes.
-     - Buttons for managing and deleting unused items.
+Number of database tables.
 
-5. **Deletion Workflow**:
-   - Allows users to select and delete unused plugins/themes safely.
+Total database size.
 
----
+get_active_items():
 
-## Installation
+Retrieves active plugins and themes, grouped by site for multisite installations.
 
-### From WordPress Admin:
+render_admin_page():
 
-1. Navigate to `Plugins > Add New`.
-2. Click **Upload Plugin**.
-3. Upload the plugin ZIP file and click **Install Now**.
-4. Once installed, click **Activate**.
+Generates the admin page, including:
 
-### Manual Installation:
+A metrics bar with key statistics.
 
-1. Upload the plugin folder to `/wp-content/plugins/`.
-2. Activate the plugin via the **Plugins** menu in WordPress.
+A table of active plugins/themes.
 
----
+A section for unused plugins/themes with deletion options.
 
-## Usage
+render_table():
 
-### For Single-Site Installations:
+Displays active plugins/themes with associated sites, database tables, and classifications (e.g., "Network Active" or "Site Active").
 
-1. Navigate to the **Admin Dashboard**.
-2. Click **Unused Items** in the menu.
-3. Review active and unused plugins/themes.
-4. Delete unused plugins/themes as needed.
+render_unused_section():
 
-### For Multisite Installations:
+Displays unused plugins/themes for review and deletion.
 
-1. Navigate to the **Network Admin Dashboard**.
-2. Click **Unused Plugins/Themes** in the menu.
-3. Review active and unused plugins/themes network-wide.
-4. Delete unused items as needed.
+Program Flow
 
----
+Initialization:
 
-## Changelog
+The UnusedPluginsThemesChecker class is instantiated during plugin activation.
 
-### **2.1** (Latest Release)
-- Enhanced UI with the Blood-of-Sun theme.
-- Introduced a metrics bar for displaying installation stats.
-- Improved classification for multisite plugins.
+It determines the installation type and registers hooks.
 
-### **2.0**
-- Added multisite support.
-- Introduced deletion features for unused plugins and themes.
-- Categorized active plugins/themes.
+Asset Loading:
 
----
+Enqueues styles and scripts for the admin interface.
 
-## Support
+Admin Menu:
 
-For questions or feedback, contact **[Aaditya Uzumaki](https://goenka.xyz)**. Suggestions are always welcome!
+Adds a menu item to the admin or network admin dashboard for accessing the plugin interface.
 
----
+Interface Rendering:
+
+Displays:
+
+Metrics bar for installation statistics.
+
+Tables of active and unused plugins/themes.
+
+Buttons for managing and deleting unused items.
+
+Deletion Workflow:
+
+Allows users to select and delete unused plugins/themes safely.
+
+Installation
+
+From WordPress Admin:
+
+Navigate to Plugins > Add New.
+
+Click Upload Plugin.
+
+Upload the plugin ZIP file and click Install Now.
+
+Once installed, click Activate.
+
+Manual Installation:
+
+Upload the plugin folder to /wp-content/plugins/.
+
+Activate the plugin via the Plugins menu in WordPress.
+
+Usage
+
+For Single-Site Installations:
+
+Navigate to the Admin Dashboard.
+
+Click Unused Items in the menu.
+
+Review active and unused plugins/themes.
+
+Delete unused plugins/themes as needed.
+
+For Multisite Installations:
+
+Navigate to the Network Admin Dashboard.
+
+Click Unused Plugins/Themes in the menu.
+
+Review active and unused plugins/themes network-wide.
+
+Delete unused items as needed.
+
+Changelog
+
+2.2 (Latest Release)
+
+Fixed theme deletion issues.
+
+Added a loading animation for plugin and theme deletions.
+
+Enhanced UI consistency for better user experience.
+
+2.1
+
+Enhanced UI with the Blood-of-Sun theme.
+
+Introduced a metrics bar for displaying installation stats.
+
+Improved classification for multisite plugins.
+
+2.0
+
+Added multisite support.
+
+Introduced deletion features for unused plugins and themes.
+
+Categorized active plugins/themes.
