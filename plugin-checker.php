@@ -1,10 +1,12 @@
 <?php
 /*
 Plugin Name: Unused Plugins and Themes Checker
-Description: A plugin to identify and delete unused plugins and themes in a WordPress multisite network.
+Description: Identify and safely delete unused plugins and themes in WordPress installations. Includes advanced metrics, intuitive UI, and deletion capabilities for streamlined site management.
 Version: 2.2
-Author: Aaditya Uzumaki 
-Website: https://goenka.xyz
+Author: Aaditya Uzumaki
+Author URI: https://goenka.xyz
+Plugin URI: https://goenka.xyz/unused-plugins-themes-checker
+Text Domain: unused-plugins-themes-checker
 */
 
 // Enqueue Styles and Scripts
